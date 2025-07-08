@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr" ng-app="dashboardApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - File d'attente</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body ng-controller="DashboardController">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2>Espace admin</h2>
+    <ul>
+      <li><a href="accueil.html">Accueil</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="ticket.html">Tickets</a></li>
+      <li><a href="service.html">Service</a></li>
+      <li><a href="guichet.html">Guichet</a></li>
+      <li><a href="deviceService.html">Device Service</a></li>
+      <li><a href="guichetService.html">Guichet Service</a></li>
+      <li><a href="user.html">Utilisateur</a></li>
+      <li><a href="setting.html">Paramètre</a></li>
+    </ul>
+  </div>
+
+  <!-- CONTENU -->
+  <div class="main-content">
+    <div class="top-bar">
+      <input type="text" ng-model="searchQuery" placeholder="Rechercher un ticket..." ng-change="filterTickets()">
+      <select ng-model="selectedPoste" ng-change="filterTickets()">
+        <option value="">Choisissez le poste</option>
+        <option value="Traoré">Guichet 1</option>
+        <option value="Kouabo">Guichet 2</option>
+        <option value="Osias">Guichet 3</option>
+      </select>
+      <select ng-model="selectedService" ng-change="filterTickets()">
+        <option value="">Choisissez le service</option>
+        <option value="Ouverture de compte">Ouverture de compte</option>
+        <option value="Réclamation">Réclamation</option>
+        <option value="Dépôt par erreur">Dépôt par erreur</option>
+        <option value="Demande de prêt">Demande de prêt</option>
+        <option value="Rétrait">Rétrait</option>
+      </select>
+      <select ng-model="selectedState" ng-change="filterTickets()">
+        <option value="">Choisissez l'état du ticket</option>
+        <option value="En attente">En attente</option>
+        <option value="En cours">En cours</option>
+        <option value="Terminé">Terminé</option>
+        <option value="Annulé">Annulé</option>
+      </select>
+      <button class="btn" ng-click="exportToExcel()">Exporter vers Excel</button>
+      <button class="btn" ng-click="exportToPDF()">Exporter vers PDF</button>
+    </div>
+
+    <div class="charts row">
+      <div class="col-md-4">
+        <canvas id="ticketsServiceChart" style="height: 300px;"></canvas>
+      </div>
+      <div class="col-md-4">
+        <canvas id="ticketsStateChart" style="height: 300px;"></canvas>
+      </div>
+    </div>
+
+    <div class="ticket-list">
+      <div class="stats row">
+        <div class="col-md-3">
+          <div class="card">
+            <span>Total Tickets</span>
+            <span>{{ totalTicketsCurrentMonth }}</span>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card">
+            <span>Tickets en attente</span>
+            <span>{{ ticketsEnAttente }}</span>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card">
+            <span>Tickets en cours</span>
+            <span>{{ ticketsEnCours }}</span>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card">
+            <span>Tickets terminés</span>
+            <span>{{ ticketsTermines }}</span>
+          </div>
+        </div>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Numéro</th>
+            <th>Service</th>
+            <th>Poste</th>
+            <th>Équipement</th>
+            <th>État</th>
+            <th>Date de Fin</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="ticket in filteredClients">
+            <td>{{ ticket.num }}</td>
+            <td>{{ ticket.service }}</td>
+            <td>{{ ticket.poste }}</td>
+            <td>{{ ticket.equipement }}</td>
+            <td>{{ ticket.etat || 'Statut non défini' }}</td>
+            <td>{{ ticket.heureFin || 'N/A' }}</td>
+            <td>
+              <button ng-click="prepareTicketForValidation(ticket)" class="btn btn-success">Valider</button>
+              <button ng-click="annuler(ticket)" class="btn btn-danger">Annuler</button>
+            </td>
+          </tr>
+          <tr ng-if="filteredClients.length === 0">
+            <td colspan="7" class="text-center">Aucun ticket trouvé</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- FORMULAIRE -->
+    <div ng-if="isValidationFormVisible" class="ticket-form">
+      <h3>Validation du Ticket #{{ selectedTicket.num }}</h3>
+      <form ng-submit="submitValidationForm()">
+        <label>Commentaire</label>
+        <textarea ng-model="selectedTicket.commentaire" rows="4" placeholder="Ajoutez un commentaire"></textarea>
+        <label>Date de fin</label>
+        <input type="datetime-local" ng-model="selectedTicket.heureFin" required />
+        <button type="submit" class="btn btn-primary">Soumettre</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONTROLLER -->
+  <script>
+    angular.module('dashboardApp', [])
+      .controller('DashboardController', ['$scope', function($scope) {
+        $scope.clients = [
+          { num: 101, service: 'Ouverture de compte', etat: 'En attente', dateheure: '2024-10-02T10:00:00', equipement: 'borne 1', poste: 'Traoré', user: 'Guichet 1' },
+          { num: 102, service: 'Demande de prêt', etat: 'En cours', dateheure: '2024-10-03T10:15:00', equipement: 'borne 2', poste: 'Kouabo', user: 'Guichet 2' },
+          { num: 103, service: 'Réclamation', etat: 'Terminé', dateheure: '2024-10-11T10:30:00', equipement: 'borne 3', poste: 'Osias', user: 'Guichet 3' }
+        ];
+
+        $scope.filteredClients = [];
+        $scope.selectedTicket = {};
+        $scope.isValidationFormVisible = false;
+
+        let serviceChart, stateChart;
+
+        $scope.filterTickets = function() {
+          $scope.filteredClients = $scope.clients.filter(function(ticket) {
+            return (!$scope.searchQuery || ticket.num.toString().includes($scope.searchQuery)) &&
+                   (!$scope.selectedPoste || ticket.poste === $scope.selectedPoste) &&
+                   (!$scope.selectedService || ticket.service === $scope.selectedService) &&
+                   (!$scope.selectedState || ticket.etat === $scope.selectedState);
+          });
+          $scope.updateCharts();
+        };
+
+  
+        $scope.updateCharts = function() {
+          let serviceCounts = { "Ouverture de compte": 0, "Réclamation": 0, "Dépôt par erreur": 0, "Demande de prêt": 0, "Rétrait": 0 };
+          let stateCounts = { "En attente": 0, "En cours": 0, "Terminé": 0, "Annulé": 0 };
+
+          $scope.filteredClients.forEach(ticket => {
+            serviceCounts[ticket.service] = (serviceCounts[ticket.service] || 0) + 1;
+            stateCounts[ticket.etat] = (stateCounts[ticket.etat] || 0) + 1;
+          });
+
+          if (serviceChart) serviceChart.destroy();
+          if (stateChart) stateChart.destroy();
+
+          serviceChart = new Chart(document.getElementById("ticketsServiceChart"), {
+            type: 'pie',
+            data: {
+              labels: Object.keys(serviceCounts),
+              datasets: [{ label: 'Tickets par service', data: Object.values(serviceCounts), backgroundColor: ['#7e5bef', '#ff6f61', '#f7c948', '#00c9a7', '#9f7aea'] }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+          });
+
+          stateChart = new Chart(document.getElementById("ticketsStateChart"), {
+            type: 'bar',
+            data: {
+              labels: Object.keys(stateCounts),
+              datasets: [{ label: 'Tickets par état', data: Object.values(stateCounts), backgroundColor: ['#ff6f61', '#f7c948', '#00c9a7', '#ddd'] }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: { y: { beginAtZero: true } }
+            }
+          });
+        };
+
+        $scope.prepareTicketForValidation = function(ticket) {
+          $scope.selectedTicket = angular.copy(ticket);
+          $scope.isValidationFormVisible = true;
+        };
+
+        $scope.submitValidationForm = function() {
+          $scope.selectedTicket.etat = "Terminé";
+          const index = $scope.clients.findIndex(t => t.num === $scope.selectedTicket.num);
+          if (index !== -1) $scope.clients[index] = angular.copy($scope.selectedTicket);
+          $scope.isValidationFormVisible = false;
+          $scope.filterTickets();
+        };
+
+        $scope.annuler = function(ticket) {
+          ticket.etat = "Annulé";
+          $scope.filterTickets();
+        };
+
+        $scope.exportToExcel = function() {
+          const wb = XLSX.utils.book_new();
+          const ws = XLSX.utils.json_to_sheet($scope.filteredClients);
+          XLSX.utils.book_append_sheet(wb, ws, "Tickets");
+          XLSX.writeFile(wb, "tickets.xlsx");
+        };
+
+        $scope.exportToPDF = function() {
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF();
+          let y = 10;
+          $scope.filteredClients.forEach(ticket => {
+            doc.text(`Ticket #${ticket.num} - Service: ${ticket.service} - État: ${ticket.etat}`, 10, y);
+            y += 10;
+          });
+          doc.save("tickets.pdf");
+        };
+
+        // Statistiques générales
+        $scope.totalTicketsCurrentMonth = $scope.clients.length;
+        $scope.ticketsEnAttente = $scope.clients.filter(t => t.etat === "En attente").length;
+        $scope.ticketsEnCours = $scope.clients.filter(t => t.etat === "En cours").length;
+        $scope.ticketsTermines = $scope.clients.filter(t => t.etat === "Terminé").length;
+
+        // Initialisation
+        $scope.filterTickets();
+      }]);
+  </script>
+</body>
+</html>
+
+
+

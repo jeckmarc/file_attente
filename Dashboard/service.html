@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr" ng-app="bankQueueApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de file d'attente - Banque</title>
+    <link rel="stylesheet" href="style-service.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body ng-controller="QueueController">
+    <div class="container">
+        <div class="sidebar">
+            <h2>Espace admin</h2>
+            <ul>
+              <li><a href="login-admin.html">Accueil</a></li>
+              <li><a href="dashboard.html">Dashboard</a></li>
+              <li><a href="ticket.html">Tickets</a></li>
+              <li><a href="service.html">Service</a></li>
+              <li><a href="guichet.html">Guichet</a></li>
+              <li><a href="deviceService.html">Device Service</a></li>
+              <li><a href="guichetService.html">Guichet Service</a></li>
+              <li><a href="user.html">Utilisateur</a></li>
+              <li><a href="setting.html">Paramètre</a></li>
+            </ul>
+          </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>Gestion de file d'attente</h1>
+            </div>
+
+            <!-- Formulaire pour ajouter ou modifier des services -->
+            <div class="form-container">
+                <h2 ng-if="isEditing">Modifier un Service</h2>
+                <h2 ng-if="!isEditing">Ajouter un Service</h2>
+                <form ng-submit="isEditing ? updateService() : addService()">
+                    <input type="text" ng-model="currentService.name" placeholder="Nom du Service" required />
+                    
+                    <!-- Sélection pour le type de service -->
+                    <select ng-model="currentService.type" required>
+                        <option value="Compte">Ouverture de Compte</option>
+                        <option value="Prêt">Demande de Prêt</option>
+                        <option value="Réclamation">Réclamation</option>
+                    </select>
+                    
+                    <input type="number" ng-model="currentGuichet.num" placeholder="Numéro du Guichet" required />
+                    <select ng-model="currentGuichet.statut" required>
+                        <option value="Activé">Activé</option>
+                        <option value="Désactivé">Désactivé</option>
+                    </select>
+                    <button type="submit">{{isEditing ? 'Mettre à jour' : 'Assigner Guichet'}}</button>
+                </form>
+            </div>
+
+            <!-- Tableau des services -->
+            <h2>Liste des Services</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom du Service</th>
+                        <th>Type de Service</th>
+                        <th>Guichet</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="service in services">
+                        <td>{{service.name}}</td>
+                        <td>{{service.type}}</td>
+                        <td>{{service.guichet}}</td>
+                        <td>
+                            <button ng-click="editService(service)">Modifier</button>
+                            <button ng-click="deleteService(service)">Supprimer</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script>
+        var app = angular.module('bankQueueApp', []);
+        app.controller('QueueController', function($scope) {
+            // Liste des services
+            $scope.services = [];
+            $scope.isEditing = false;
+            $scope.currentService = {};
+            $scope.currentGuichet = {};
+
+            // Ajouter un service
+            $scope.addService = function() {
+                $scope.services.push({
+                    name: $scope.currentService.name,
+                    type: $scope.currentService.type,
+                    guichet: $scope.currentGuichet.num
+                });
+                $scope.resetForm();
+            };
+
+            // Modifier un service
+            $scope.editService = function(service) {
+                $scope.currentService = angular.copy(service);
+                $scope.isEditing = true;
+            };
+
+            // Mettre à jour un service
+            $scope.updateService = function() {
+                var index = $scope.services.findIndex(s => s.name === $scope.currentService.name);
+                if (index !== -1) {
+                    $scope.services[index] = angular.copy($scope.currentService);
+                }
+                $scope.resetForm();
+            };
+
+            // Supprimer un service
+            $scope.deleteService = function(service) {
+                $scope.services = $scope.services.filter(s => s !== service);
+            };
+
+            // Réinitialiser le formulaire
+            $scope.resetForm = function() {
+                $scope.currentService = {};
+                $scope.currentGuichet = {};
+                $scope.isEditing = false;
+            };
+        });
+    </script>
+</body>
+</html>

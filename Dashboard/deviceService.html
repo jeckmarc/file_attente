@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr" ng-app="deviceServiceApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affectation de Dispositifs et Services</title>
+    <link rel="stylesheet" href="Assets/Css/deviceService.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style-device.css">
+   
+</head>
+<body ng-controller="DeviceServiceController">
+    <div class="container">
+       <!-- SIDEBAR -->
+  < <div class="sidebar">
+    <h2>Espace admin</h2>
+    <ul>
+      <li><a href="login-admin.html">Accueil</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="ticket.html">Tickets</a></li>
+      <li><a href="service.html">Service</a></li>
+      <li><a href="guichet.html">Guichet</a></li>
+      <li><a href="deviceService.html">Device Service</a></li>
+      <li><a href="guichetService.html">Guichet Service</a></li>
+      <li><a href="user.html">Utilisateur</a></li>
+      <li><a href="setting.html">Paramètre</a></li>
+    </ul>
+  </div>
+
+        <div class="main-content">
+            <h1>Affectation de Dispositifs et Services</h1>
+
+            <!-- Notification -->
+            <div class="notification" id="notificationMessage">{{notificationMessage}}</div> 
+
+            <!-- Formulaire d'affectation -->
+            <div class="form-container">
+                <h2>Affecter des dispositifs et services</h2>
+                <form ng-submit="assignServices()">
+                    <div class="selection-container">
+                        <label for="devices">Choisir des dispositifs :</label>
+                        <div ng-repeat="device in devices">
+                            <button type="button" class="device-button" ng-click="toggleDeviceSelection(device.id)">
+                                {{device.name}} <span ng-show="selectedDevices.includes(device.id)">✔️</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="selection-container">
+                        <label for="services">Choisir des services :</label>
+                        <div ng-repeat="service in services">
+                            <button type="button" class="service-button" ng-click="toggleServiceSelection(service.id)">
+                                {{service.service}} <span ng-show="selectedServices.includes(service.id)">✔️</span>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit">Affecter</button>
+                </form>
+            </div>
+
+            <!-- Tableau des affectations -->
+            <h2>Affectations</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Dispositif</th>
+                            <th>Nom Dispositif</th>
+                            <th>ID Service</th>
+                            <th>Nom Service</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="affectation in affectations">
+                            <td>{{affectation.deviceId}}</td>
+                            <td>{{affectation.deviceName}}</td>
+                            <td>{{affectation.serviceId}}</td>
+                            <td>{{affectation.serviceName}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script>
+        var app = angular.module('deviceServiceApp', []);
+        app.controller('DeviceServiceController', function($scope) {
+            // Liste des dispositifs
+            $scope.devices = [
+                { id: 1, name: 'Borne 1' },
+                { id: 2, name: 'Borne 2' },
+                { id: 3, name: 'Borne 3' },
+                { id: 4, name: 'Borne 4' }
+            ];
+
+            // Liste des services
+            $scope.services = [
+                { id: 1, service: 'Ouverture de compte' },
+                { id: 2, service: 'Dépôt d\'argent' },
+                { id: 3, service: 'Prêts et crédits' },
+                { id: 4, service: 'Consultation de solde' }
+            ];
+
+            // Modèles pour les sélections
+            $scope.selectedDevices = [];
+            $scope.selectedServices = [];
+            $scope.affectations = [];
+            $scope.notificationMessage = "";
+
+            // Fonction pour afficher une notification
+            function afficherNotification(message, type = 'success') {
+                $scope.notificationMessage = message;
+                var notificationElement = document.getElementById('notificationMessage');
+                notificationElement.classList.remove('error');
+                if (type === 'error') {
+                    notificationElement.classList.add('error');
+                }
+                notificationElement.style.display = 'block';
+                setTimeout(function() {
+                    notificationElement.style.display = 'none';
+                }, 3000);
+            }
+
+            // Fonction pour basculer la sélection des dispositifs
+            $scope.toggleDeviceSelection = function(deviceId) {
+                const index = $scope.selectedDevices.indexOf(deviceId);
+                if (index === -1) {
+                    $scope.selectedDevices.push(deviceId);
+                } else {
+                    $scope.selectedDevices.splice(index, 1);
+                }
+            };
+
+            // Fonction pour basculer la sélection des services
+            $scope.toggleServiceSelection = function(serviceId) {
+                const index = $scope.selectedServices.indexOf(serviceId);
+                if (index === -1) {
+                    $scope.selectedServices.push(serviceId);
+                } else {
+                    $scope.selectedServices.splice(index, 1);
+                }
+            };
+
+            // Fonction pour affecter les services aux dispositifs
+            $scope.assignServices = function() {
+                if ($scope.selectedDevices.length === 0 || $scope.selectedServices.length === 0) {
+                    afficherNotification('Veuillez sélectionner au moins un dispositif et un service.', 'error');
+                    return;
+                }
+
+                // Ajouter les affectations pour chaque combinaison de dispositifs et de services sélectionnés
+                for (var i = 0; i < $scope.selectedDevices.length; i++) {
+                    for (var j = 0; j < $scope.selectedServices.length; j++) {
+                        $scope.affectations.push({
+                            deviceId: $scope.selectedDevices[i],
+                            deviceName: $scope.devices.find(device => device.id == $scope.selectedDevices[i]).name,
+                            serviceId: $scope.selectedServices[j],
+                            serviceName: $scope.services.find(service => service.id == $scope.selectedServices[j]).service
+                        });
+                    }
+                }
+
+                afficherNotification('Services affectés avec succès aux dispositifs.');
+                $scope.resetSelections();
+            };
+
+            // Réinitialiser les sélections
+            $scope.resetSelections = function() {
+                $scope.selectedDevices = [];
+                $scope.selectedServices = [];
+            };
+        });
+    </script>
+</body>
+</html>

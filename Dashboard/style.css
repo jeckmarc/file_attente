@@ -1,0 +1,149 @@
+body {
+    background-color: #1e1e1e;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 20px;
+  }
+
+  h1 {
+    color: #a38bff;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .stats, .charts, .actions, table {
+    margin-top: 30px;
+    width: 100%;
+  }
+
+  .charts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .charts canvas {
+    width: 100%;
+    max-width: 400px;  /* Limiter la largeur */
+    height: 300px; /* Ajuster la hauteur */
+    background: #fffefe;
+    border-radius: 20px;
+    padding: 20px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+  }
+
+  .btn-valider { background-color: #28a745; }
+  .btn-annuler { background-color: #dc3545; }
+  .btn-cloturer { background-color: #7e5bef; }
+
+  table {
+    width: 100%;
+    background-color: #fefefe;
+    border-radius: 10px;
+    overflow: hidden;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    padding: 12px;
+    border-bottom: 1px solid #fcfcfc;
+    text-align: left;
+  }
+
+  th {
+    background-color: #333;
+    color: #c29fff;
+  }
+
+  tr:hover {
+    background-color: #444;
+  }
+
+  .form-final {
+    background-color: #2f2f2f;
+    padding: 20px;
+    margin-top: 30px;
+    border-radius: 10px;
+  }
+
+  .form-final input, .form-final textarea {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #1a1a1a;
+    border: none;
+    color: white;
+    border-radius: 5px;
+  }
+
+  .sidebar {
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #333;
+    height: 100%;
+    padding-top: 20px;
+  }
+
+  .sidebar h2 {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .sidebar ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .sidebar ul li a {
+    color: #fff;
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    margin: 10px 0;
+  }
+
+  .sidebar ul li a:hover {
+    background-color: #444;
+  }
+
+  .main-content {
+    margin-left: 270px;
+    padding: 20px;
+  }
+
+  .top-bar input, .top-bar select {
+    padding: 8px;
+    margin: 10px 5px;
+    width: 180px;
+  }
+
+  .ticket-list {
+    margin-top: 20px;
+  }
+
+  .card {
+    background-color: #444;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 8px;
+    color: #fff;
+    text-align: center;
+  }
+
+  .ticket-form {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+  }

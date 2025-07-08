@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr" ng-app="queueApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestion de File d'Attente</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: url('freepik__the-style-is-candid-image-photography-with-natural__77678.jpeg') no-repeat center center fixed; /* Remplacer avec un fichier image valide */
+      background-size: cover;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      color: #c29fff;
+    }
+
+    .cards-container {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      align-items: stretch;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background: rgba(51, 51, 51, 0.7); /* Fond semi-transparent */
+      padding: 30px 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      text-align: center;
+      width: 250px;
+      transition: transform 0.3s, background-color 0.3s;
+    }
+
+    .card:hover {
+      background-color: #444;
+      transform: translateY(-5px);
+    }
+
+    .card h2 {
+      color: #b19cd9;
+      margin-bottom: 20px;
+    }
+
+    .card button {
+      background-color: #7e5bef;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .card button:hover {
+      background-color: #a38bff;
+    }
+  </style>
+</head>
+<body ng-controller="MainController">
+  <h1>Bienvenue dans l'application de gestion de file d'attente</h1>
+
+  <div class="cards-container">
+    <div class="card">
+      <h2>Administrateur</h2>
+      <p>Gérez les services, guichets et utilisateurs.</p>
+      <button ng-click="goToAdmin()">Connexion Admin</button>
+    </div>
+
+    <div class="card">
+      <h2>Employé</h2>
+      <p>Accédez à vos tickets et services.</p>
+      <button ng-click="goToEmployee()">Connexion Employé</button>
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script>
+    angular.module('queueApp', [])
+    .controller('MainController', function($window, $scope) {
+      $scope.goToAdmin = function() {
+        $window.location.href = 'login-admin.html';
+      };
+
+      $scope.goToEmployee = function() {
+        $window.location.href = 'login-employee.html';
+      };
+    });
+  </script>
+</body>
+</html>

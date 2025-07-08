@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr" ng-app="deviceServiceApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paramètres</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="style-setting.css">
+</head>
+<body ng-controller="SettingsController" ng-class="settings.theme === 'sombre' ? 'dark-theme' : 'light-theme'">
+
+    <div class="sidebar">
+        <h2>Espace admin</h2>
+        <ul>
+          <li><a href="login-admin.html">Accueil</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="ticket.html">Tickets</a></li>
+          <li><a href="service.html">Service</a></li>
+          <li><a href="guichet.html">Guichet</a></li>
+          <li><a href="deviceService.html">Device Service</a></li>
+          <li><a href="guichetService.html">Guichet Service</a></li>
+          <li><a href="user.html">Utilisateur</a></li>
+          <li><a href="setting.html">Paramètre</a></li>
+        </ul>
+      </div>
+
+  <div class="main-content">
+    <h1>Paramètres de l'Application</h1>
+
+    <!-- Notifications -->
+    <div class="settings-section">
+      <label>Notifications :</label>
+      <i class="fas fa-bell notification-icon" ng-click="toggleNotifications()" ng-class="{ 'active': settings.notifications }"></i>
+    </div>
+
+    <!-- Choix du thème -->
+    <div class="settings-section">
+      <label>Choisissez un thème :</label>
+      <div class="toggle-container" ng-click="toggleTheme()">
+        <div class="toggle-switch" ng-class="{ 'active': settings.theme === 'sombre' }"></div>
+        <span style="margin-left: 10px;">{{ settings.theme === 'sombre' ? 'Sombre' : 'Clair' }}</span>
+      </div>
+    </div>
+
+    <!-- Dashboard Settings -->
+    <div class="settings-section">
+      <label>Fréquence de rafraîchissement du dashboard (secondes) :</label>
+      <input type="number" ng-model="settings.refreshRate" placeholder="5">
+
+      <label>Période par défaut des graphiques :</label>
+      <select ng-model="settings.defaultPeriod">
+        <option value="day">Jour</option>
+        <option value="week">Semaine</option>
+        <option value="month">Mois</option>
+      </select>
+
+      <label>Type de graphique par défaut :</label>
+      <select ng-model="settings.defaultChartType">
+        <option value="bar">Barres</option>
+        <option value="line">Lignes</option>
+        <option value="pie">Camembert</option>
+      </select>
+    </div>
+
+    <!-- User Settings -->
+    <div class="settings-section">
+      <label>Changer le mot de passe :</label>
+      <input type="password" ng-model="settings.newPassword" placeholder="Nouveau mot de passe">
+
+      <label>Photo de profil (URL) :</label>
+      <input type="text" ng-model="settings.avatarUrl" placeholder="Lien de l'image">
+    </div>
+
+    <!-- Display Preferences -->
+    <div class="settings-section">
+      <label>Densité d'affichage :</label>
+      <select ng-model="settings.displayDensity">
+        <option value="compact">Compact</option>
+        <option value="normal">Normal</option>
+        <option value="large">Large</option>
+      </select>
+
+      <label>Colonnes visibles :</label>
+      <div>
+        <label><input type="checkbox" ng-model="settings.columns.email"> Email</label><br>
+        <label><input type="checkbox" ng-model="settings.columns.priority"> Priorité</label><br>
+        <label><input type="checkbox" ng-model="settings.columns.status"> Statut</label>
+      </div>
+    </div>
+
+    <!-- Advanced Notifications -->
+    <div class="settings-section">
+      <label>Type de notifications à recevoir :</label>
+      <select ng-model="settings.notificationType">
+        <option value="all">Toutes</option>
+        <option value="vip">VIP seulement</option>
+        <option value="urgent">Urgentes seulement</option>
+      </select>
+    </div>
+    <div class="settings-section">
+        <label>Capacité maximale des guichets :</label>
+        <input type="number" ng-model="settings.guichetCapacity" placeholder="Capacité guichet">
+      </div>
+  
+      <div class="settings-section">
+        <label>Langue :</label>
+        <select ng-model="settings.language">
+          <option value="fr">Français</option>
+          <option value="en">Anglais</option>
+          <option value="es">Espagnol</option>
+        </select>
+      </div>
+  
+      <div class="settings-section">
+        <label>Règles de priorité :</label>
+        <select ng-model="settings.priorityRules">
+          <option value="normal">Normal</option>
+          <option value="vip">VIP</option>
+          <option value="urgent">Urgent</option>
+        </select>
+      </div>
+    <!-- Dev Mode -->
+    <div class="settings-section">
+      <label>Mode Développeur :</label>
+      <div class="toggle-container" ng-click="toggleDevMode()">
+        <div class="toggle-switch" ng-class="{ 'active': settings.devMode }"></div>
+        <span style="margin-left: 10px;">{{ settings.devMode ? 'Activé' : 'Désactivé' }}</span>
+      </div>
+    </div>
+
+    <!-- Import / Export config -->
+    <div class="settings-section">
+      <button class="apply-button" ng-click="exportSettings()">Exporter Paramètres</button>
+      <input type="file" id="importFile" style="display:none" onchange="angular.element(this).scope().importSettings(this)">
+      <button class="apply-button" ng-click="triggerImport()">Importer Paramètres</button>
+    </div>
+
+    <button class="apply-button" ng-click="applySettings()">Appliquer les Paramètres</button>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script>
+    var app = angular.module('deviceServiceApp', []);
+
+    app.controller('SettingsController', function($scope) {
+      $scope.settings = JSON.parse(localStorage.getItem('userSettings')) || {
+        notifications: true,
+        theme: 'sombre',
+        language: 'fr',
+        waitTime: 10,
+        guichetCapacity: 5,
+        priorityRules: 'normal',
+        twoFactorAuth: false,
+        refreshRate: 5,
+        defaultPeriod: 'week',
+        defaultChartType: 'bar',
+        newPassword: '',
+        avatarUrl: '',
+        displayDensity: 'normal',
+        columns: { email: true, priority: true, status: true },
+        notificationType: 'all',
+        devMode: false
+      };
+
+      $scope.toggleNotifications = function() {
+        $scope.settings.notifications = !$scope.settings.notifications;
+      };
+
+      $scope.toggleTheme = function() {
+        $scope.settings.theme = ($scope.settings.theme === 'clair') ? 'sombre' : 'clair';
+      };
+
+      $scope.toggleTwoFactorAuth = function() {
+        $scope.settings.twoFactorAuth = !$scope.settings.twoFactorAuth;
+      };
+
+      $scope.toggleDevMode = function() {
+        $scope.settings.devMode = !$scope.settings.devMode;
+      };
+
+      $scope.applySettings = function() {
+        localStorage.setItem('userSettings', JSON.stringify($scope.settings));
+        alert("✅ Paramètres appliqués et sauvegardés !");
+      };
+
+      $scope.exportSettings = function() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify($scope.settings));
+        const dlAnchor = document.createElement('a');
+        dlAnchor.setAttribute("href", dataStr);
+        dlAnchor.setAttribute("download", "settings.json");
+        dlAnchor.click();
+      };
+
+      $scope.triggerImport = function() {
+        document.getElementById('importFile').click();
+      };
+
+      $scope.importSettings = function(input) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          $scope.$apply(function() {
+            $scope.settings = JSON.parse(e.target.result);
+          });
+        };
+        reader.readAsText(input.files[0]);
+      };
+    });
+  </script>
+</body>
+</html>

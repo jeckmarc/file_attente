@@ -1,0 +1,190 @@
+body {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 20px;
+  }
+
+  .container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #333;
+      height: 100%;
+      padding-top: 20px;
+    }
+  
+    .sidebar h2 {
+      color: #fff;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+  
+    .sidebar ul {
+      list-style-type: none;
+      padding: 0;
+    }
+  
+    .sidebar ul li a {
+      color: #fff;
+      display: block;
+      padding: 10px;
+      text-decoration: none;
+      margin: 10px 0;
+    }
+  
+    .sidebar ul li a:hover {
+      background-color: #444;
+    }
+  
+    .main-content {
+      margin-left: 270px;
+      padding: 20px;
+    }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+
+  .header h1 {
+    font-size: 2.5rem;
+    color: #81ecec;
+  }
+
+  .notification {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .notification.success {
+    background-color: #00b894;
+    color: white;
+  }
+
+  .notification.error {
+    background-color: #d63031;
+    color: white;
+  }
+
+  .form-container {
+    background: #1e1e2f;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+  }
+
+  .form-container h2 {
+    color: #6c5ce7;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+  }
+
+  .form-container input,
+  .form-container select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 8px;
+    background: #414361;
+    color: #ffffff;
+  }
+
+  .form-container button {
+    background: #6c5ce7;
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .form-container button:hover {
+    background: #5a4bcf;
+  }
+
+  h2 {
+    margin-top: 40px;
+    color: #81ecec;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    margin-top: 20px;
+  }
+
+  thead {
+    background: #6c5ce7;
+  }
+
+  th {
+    padding: 15px;
+    text-align: left;
+    color: white;
+    font-size: 1.1rem;
+  }
+
+  tbody tr {
+    background: #414361;
+    border-radius: 8px;
+    transition: transform 0.2s, background-color 0.2s;
+  }
+
+  tbody tr:hover {
+    background-color: #53537b;
+    transform: scale(1.01);
+  }
+
+  td {
+    padding: 15px;
+    color: #dcdde1;
+    font-size: 1rem;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .actions button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .edit-btn {
+    background: #00cec9;
+    color: #1e1e1e;
+  }
+
+  .edit-btn:hover {
+    background: #00b894;
+  }
+
+  .delete-btn {
+    background: #d63031;
+    color: white;
+  }
+
+  .delete-btn:hover {
+    background: #c0392b;
+  }

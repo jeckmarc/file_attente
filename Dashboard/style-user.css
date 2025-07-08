@@ -1,0 +1,185 @@
+/* Réinitialisation de base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    background-color:  #030303; /* Fond sombre pour le corps */
+    min-height: 100vh;
+    color: #ecf0f1; /* Texte clair */
+}
+
+/* Conteneur général */
+.container {
+    display: flex;
+    width: 100%;
+    background-color: #131313; /* Fond sombre */
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #161616; /* Bleu-gris foncé */
+    color: #ecf0f1; /* Texte clair */
+    padding: 20px;
+    height: 100vh;
+    transition: width 0.3s ease;
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+    color: #ecf0f1;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 15px 0;
+}
+
+.sidebar ul li a {
+    color: #ecf0f1;
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+    background-color: #34495e; /* Survol avec couleur sombre */
+}
+
+/* Contenu principal */
+.main-content {
+    padding: 30px;
+    flex-grow: 1;
+    background-color: #121212; /* Fond sombre avec une légère teinte bleutée */
+}
+
+/* Titres */
+h1 {
+    color: #ecf0f1;
+    margin-bottom: 30px;
+}
+
+/* Formulaire */
+form {
+    margin-top: 20px;
+    padding: 20px;
+    background: #141414; /* Fond sombre pour les formulaires */
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+form div {
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+    color: #ecf0f1;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    border: 1px solid #3d3f5c;
+    border-radius: 5px;
+    background-color: #3d3f5c; /* Fond sombre pour les inputs */
+    color: #ecf0f1;
+}
+
+button {
+    margin-top: 15px;
+    padding: 12px;
+    background-color: #b084cc; /* Violet doux pour les boutons */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #9b59b6; /* Violet plus foncé pour hover */
+}
+
+/* Tableaux */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #3d3f5c;
+    text-align: left;
+}
+
+th {
+    background-color: #9b59b6; /* Violet clair pour les en-têtes de tableau */
+    color: white;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #2c2f4a; /* Légère alternance de couleur pour les lignes */
+}
+
+tr:hover {
+    background-color: #3d3f5c; /* Survol des lignes avec un foncé agréable */
+}
+
+/* Notifications */
+.notification {
+    background-color: #27ae60; /* Vert pour la notification de succès */
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    display: none;
+}
+
+.notification.error {
+    background-color: #e74c3c; /* Rouge pour une erreur */
+}
+
+/* Thèmes (dans la sidebar) */
+.theme-light {
+    background-color: #fff;
+    color: #2c3e50;
+}
+
+.theme-dark {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+}
+
+.theme-blue {
+    background-color: #3498db; /* Bleu pour les éléments de mise en avant */
+    color: white;
+}
+
+.theme-green {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.theme-red {
+    background-color: #e74c3c;
+    color: white;
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr" ng-app="loginApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Connexion - Banque</title>
+  <link rel="stylesheet" href="style-loginaad.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-controller="LoginController">
+
+  <div class="login-container">
+    <h2>Connexion</h2>
+
+    <!-- 🔐 Formulaire de connexion -->
+    <div ng-if="!showForgot">
+      <input type="text" ng-model="login.username" placeholder="Nom d'utilisateur" required>
+      <input type="password" ng-model="login.password" placeholder="Mot de passe" required>
+      <button ng-click="seConnecter()">Se connecter</button>
+
+      <span class="forgot-link" ng-click="toggleForgot()">Mot de passe oublié ?</span>
+    </div>
+
+    <!-- ✉️ Formulaire de réinitialisation -->
+    <div ng-if="showForgot">
+      <input type="email" ng-model="resetEmail" placeholder="Entrez votre adresse e-mail" required>
+      <button ng-click="envoyerReinitialisation()">Envoyer un lien de réinitialisation</button>
+
+      <span class="forgot-link" ng-click="toggleForgot()">← Retour à la connexion</span>
+
+      <div class="success-message" ng-if="messageEnvoye">
+        ✔️ Un lien a été envoyé à votre e-mail.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    angular.module('loginApp', [])
+      .controller('LoginController', ['$scope', function($scope) {
+        $scope.login = {};
+        $scope.showForgot = false;
+        $scope.resetEmail = '';
+        $scope.messageEnvoye = false;
+
+        $scope.seConnecter = function () {
+          if ($scope.login.username === 'admin' && $scope.login.password === 'admin123') {
+            // ✅ Connexion réussie
+            window.location.href = 'dashboard.html'; // Redirige vers ton dashboard
+          } else {
+            // ❌ Erreur
+            alert("Identifiants incorrects. Veuillez réessayer.");
+          }
+        };
+        
+
+        $scope.toggleForgot = function () {
+          $scope.showForgot = !$scope.showForgot;
+          $scope.messageEnvoye = false;
+          $scope.resetEmail = '';
+        };
+
+        $scope.envoyerReinitialisation = function () {
+          if ($scope.resetEmail) {
+            $scope.messageEnvoye = true;
+            console.log("Lien de réinitialisation envoyé à :", $scope.resetEmail);
+          }
+        };
+      }]);
+  </script>
+</body>
+</html>

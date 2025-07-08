@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr" ng-app="queueApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Connexion Employé</title>
+  <link rel="stylesheet" href="style-logep.css">
+</head>
+<body ng-controller="LoginController">
+  <div class="login-box">
+    <h2>Connexion Employé</h2>
+    <form name="employeeForm" ng-submit="login('employee')" novalidate>
+      <input type="text" ng-model="user.username" placeholder="Nom d'utilisateur" required>
+      <input type="password" ng-model="user.password" placeholder="Mot de passe" required>
+      <p style="margin-top: 15px; text-align: center;">
+        <a href="reset-password.html" style="color: #a38bff; text-decoration: none;">
+          Mot de passe oublié ?
+        </a>
+      </p>      
+      <div class="error" ng-show="errorMessage">{{ errorMessage }}</div>
+      <button type="submit">Se connecter</button>
+    </form>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // app.js
+var app = angular.module('queueApp', []);
+
+app.controller('LoginController', function($scope, $window) {
+  $scope.user = {};
+  $scope.errorMessage = "";
+
+  // Liste des employés autorisés (à terme, tu pourras récupérer ça d'une API backend !)
+  const employees = [
+    { username: "employe1", password: "1234" },
+    { username: "employe2", password: "abcd" },
+    { username: "admin", password: "adminpass" }
+  ];
+
+  $scope.login = function(role) {
+    // Validation de base
+    if (!$scope.user.username || !$scope.user.password) {
+      $scope.errorMessage = "Veuillez remplir tous les champs.";
+      return;
+    }
+
+    // Vérification des identifiants
+    const userFound = employees.find(emp => 
+      emp.username === $scope.user.username && emp.password === $scope.user.password
+    );
+
+    if (userFound) {
+      // Authentification réussie
+      $scope.errorMessage = "";
+      // Redirige vers la page principale après connexion
+      $window.location.href = 'accueil.html'; 
+    } else {
+      // Authentification échouée
+      $scope.errorMessage = "Nom d'utilisateur ou mot de passe incorrect.";
+    }
+  };
+});
+
+  </script>
+</body>
+</html>

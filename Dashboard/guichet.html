@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr" ng-app="bankQueueApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion de Guichets - Banque</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="style-guichet.css">
+</head>
+
+<body ng-controller="QueueController">
+  <div class="container">
+    <div class="sidebar">
+      <h2>Espace Admin</h2>
+      <ul>
+        <li><a href="accueil.html">Accueil</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="ticket.html">Tickets</a></li>
+        <li><a href="service.html">Service</a></li>
+        <li><a href="guichet.html">Guichet</a></li>
+        <li><a href="deviceService.html">Device Service</a></li>
+        <li><a href="guichetService.html">Guichet Service</a></li>
+        <li><a href="user.html">Utilisateur</a></li>
+        <li><a href="setting.html">Paramètres</a></li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <div class="header">
+        <h1>Gestion des Guichets</h1>
+      </div>
+
+      <div id="notificationMessage" class="notification" ng-class="{'success': notificationType==='success', 'error': notificationType==='error'}">
+        {{notificationMessage}}
+      </div>
+
+      <div class="form-container">
+        <h2>{{isEditing ? 'Modifier un Guichet' : 'Ajouter un Guichet'}}</h2>
+        <form ng-submit="isEditing ? updateGuichet() : addGuichet()">
+          <input type="number" ng-model="currentGuichet.num" placeholder="Numéro du Guichet" required />
+          <input type="text" ng-model="currentGuichet.client" placeholder="Nom du Client" />
+          <select ng-model="currentGuichet.statut" required>
+            <option value="Activé">Activé</option>
+            <option value="Désactivé">Désactivé</option>
+          </select>
+          <button type="submit">{{isEditing ? 'Mettre à jour' : 'Ajouter Guichet'}}</button>
+        </form>
+      </div>
+
+      <h2>Liste des Guichets</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Numéro de Guichet</th>
+            <th>Service</th>
+            <th>Statut</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="guichet in guichets">
+            <td>{{guichet.num}}</td>
+            <td>{{guichet.client || 'Aucun'}}</td>
+            <td>{{guichet.statut}}</td>
+            <td class="actions">
+              <button class="edit-btn" ng-click="editGuichet(guichet)">Modifier</button>
+              <button class="delete-btn" ng-click="deleteGuichet(guichet)">Supprimer</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="js/Controllers/guichet.ctrl.js"></script>
+  <script>
+    var app = angular.module('bankQueueApp', []);
+    app.controller('QueueController', function($scope) {
+      $scope.guichets = [];
+      $scope.isEditing = false;
+      $scope.currentGuichet = {};
+      $scope.notificationMessage = "";
+      $scope.notificationType = "";
+
+      function afficherNotification(message, type = 'success') {
+        $scope.notificationMessage = message;
+        $scope.notificationType = type;
+        var notif = document.getElementById('notificationMessage');
+        notif.style.display = 'block';
+        setTimeout(function() {
+          notif.style.display = 'none';
+        }, 3000);
+      }
+
+      $scope.addGuichet = function() {
+        $scope.guichets.push({
+          num: $scope.currentGuichet.num,
+          client: $scope.currentGuichet.client || null,
+          statut: $scope.currentGuichet.statut
+        });
+        afficherNotification('Guichet ajouté avec succès.');
+        $scope.resetForm();
+      };
+
+      $scope.editGuichet = function(guichet) {
+        $scope.currentGuichet = angular.copy(guichet);
+        $scope.isEditing = true;
+      };
+
+      $scope.updateGuichet = function() {
+        var index = $scope.guichets.findIndex(g => g.num === $scope.currentGuichet.num);
+        if (index !== -1) {
+          $scope.guichets[index] = angular.copy($scope.currentGuichet);
+          afficherNotification('Guichet mis à jour avec succès.');
+        } else {
+          afficherNotification('Guichet non trouvé.', 'error');
+        }
+        $scope.resetForm();
+      };
+
+      $scope.deleteGuichet = function(guichet) {
+        $scope.guichets = $scope.guichets.filter(g => g !== guichet);
+        afficherNotification('Guichet supprimé avec succès.');
+      };
+
+      $scope.resetForm = function() {
+        $scope.currentGuichet = {};
+        $scope.isEditing = false;
+      };
+    });
+  </script>
+</body>
+</html>

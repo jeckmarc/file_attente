@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr" ng-app="ticketApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Générateur de Ticket de Banque</title>
+  <link rel="stylesheet" href="style-ticket.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-controller="TicketController">
+  <h2>Création de Ticket de File d'attente</h2>
+
+  <div class="form-container">
+    <label>Numéro du ticket</label>
+    <input type="number" ng-model="ticket.numero" placeholder="Ex: 105">
+
+    <label>Service</label>
+    <select ng-model="ticket.service">
+      <option value="">-- Sélectionnez --</option>
+      <option>Ouverture de compte</option>
+      <option>Réclamation</option>
+      <option>Dépôt par erreur</option>
+      <option>Demande de prêt</option>
+      <option>Rétrait</option>
+    </select>
+
+    <label>Guichet</label>
+    <select ng-model="ticket.guichet">
+      <option value="">-- Sélectionnez --</option>
+      <option>Guichet 1</option>
+      <option>Guichet 2</option>
+      <option>Guichet 3</option>
+      <option>Guichet 4</option>
+    </select>
+
+    <label>Date et heure</label>
+    <input type="datetime-local" ng-model="ticket.date">
+  </div>
+
+  <div class="ticket-preview" ng-if="ticket.numero && ticket.service && ticket.guichet && ticket.date">
+    <div class="ticket-header">Banque Nationale</div>
+    <div class="ticket-info">Service : <strong>{{ ticket.service }}</strong></div>
+    <div class="ticket-number">#{{ ticket.numero }}</div>
+    <div class="ticket-info">Guichet : {{ ticket.guichet }}</div>
+    <div class="ticket-time">Émis le : {{ ticket.date | date:'dd/MM/yyyy à HH:mm' }}</div>
+    <button class="btn" ng-click="print()">Imprimer</button>
+  </div>
+
+  <script>
+    angular.module('ticketApp', [])
+      .controller('TicketController', ['$scope', function($scope) {
+        $scope.ticket = {
+          numero: '',
+          service: '',
+          guichet: '',
+          date: new Date()
+        };
+
+        $scope.print = function() {
+          window.print();
+        };
+      }]);
+  </script>
+</body>
+</html>

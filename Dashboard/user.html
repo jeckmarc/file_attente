@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr" ng-app="deviceServiceApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Utilisateurs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style-user.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Espace admin</h2>
+        <ul>
+        <li><a href="login-admin.html">Accueil</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="ticket.html">Tickets</a></li>
+        <li><a href="service.html">Service</a></li>
+        <li><a href="guichet.html">Guichet</a></li>
+        <li><a href="deviceService.html">Device Service</a></li>
+        <li><a href="guichetService.html">Guichet Service</a></li>
+        <li><a href="user.html">Utilisateur</a></li>
+        <li><a href="setting.html">Paramètre</a></li>
+        </ul>
+        
+      </div>
+    <div class="main-content" ng-controller="UsersController">
+        <h1>Gestion des Utilisateurs</h1>
+        
+        <!-- Formulaire d'ajout d'utilisateur -->
+        <form ng-submit="addUser(newUserName, newUserRole)" novalidate>
+            <div>
+                <label for="name">Nom de l'utilisateur :</label>
+                <input type="text" id="name" ng-model="newUserName" placeholder="Entrez le nom" required>
+            </div>
+            <div>
+                <label for="role">Rôle de l'utilisateur :</label>
+                <select id="role" ng-model="newUserRole" required>
+                    <option value="Administrateur">Administrateur</option>
+                    <option value="Utilisateur">Utilisateur</option>
+                </select>
+            </div>
+            <button type="submit">Ajouter Utilisateur</button>
+        </form>
+
+        <!-- Tableau des utilisateurs -->
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Rôle</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="user in users">
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.role }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- AngularJS et script du contrôleur -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script>
+        var app = angular.module('deviceServiceApp', []);
+
+        app.controller('UsersController', function($scope) {
+            $scope.users = [
+                { id: 1, name: 'Alice', role: 'Administrateur' },
+                { id: 2, name: 'Bob', role: 'Utilisateur' },
+                { id: 3, name: 'Charlie', role: 'Administrateur' }
+            ];
+
+            let nextUserId = $scope.users.length + 1;
+
+            $scope.addUser = function(name, role) {
+                if (name && role) {
+                    $scope.users.push({
+                        id: nextUserId++,
+                        name: name,
+                        role: role
+                    });
+
+                    $scope.newUserName = '';
+                    $scope.newUserRole = '';
+                } else {
+                    alert("Veuillez remplir tous les champs.");
+                }
+            };
+        });
+    </script>
+</body>
+</html>
